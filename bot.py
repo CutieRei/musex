@@ -1,7 +1,14 @@
 from discord.ext import commands
 import os
 
-bot = commands.Bot(command_prefix="musex.")
+extensions = [
+    "music"
+]
+bot = commands.Bot(command_prefix="mx.")
+bot.load_extension("jishaku")
+
+for ext in extensions:
+    bot.load_extension(f"ext.{ext}")
 
 @bot.listen()
 async def on_ready():
