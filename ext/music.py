@@ -30,7 +30,6 @@ class Music(commands.Cog):
             stdout=asyncio.subprocess.PIPE
         )
         stdout, _ = await proc.communicate()
-        proc.kill()
         proc = await asyncio.create_subprocess_shell(
             f"{executable} -f webm -i pipe:0 -f mp3 pipe:1",
             stdin=asyncio.subprocess.PIPE,
