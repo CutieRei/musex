@@ -14,7 +14,7 @@ async def in_vc(ctx: commands.Context):
             if isinstance(author_vc.channel, discord.VoiceChannel):
                 await author_vc.channel.connect()
                 return True
-    return False
+    return True
 
 class Music(commands.Cog):
 
