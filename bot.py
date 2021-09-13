@@ -1,3 +1,5 @@
+import asyncio
+import aiohttp
 from discord.ext import commands
 import os
 
@@ -13,6 +15,16 @@ for ext in extensions:
 @bot.listen()
 async def on_ready():
     print("Logged in as", str(bot.user))
+
+async def _job():
+    async with aiohttp.ClientSession() as sess:
+        await sess.post("http://localhost:8000/restart", data={"token": bot.http.token})
+
+@bot.command()
+@commands.is_owner()
+async def restart(ctx):
+    await ctx.send("Restarting....")
+    asyncio.create_task(_job())
 
 token = os.getenv("TOKEN")
 if not token:
