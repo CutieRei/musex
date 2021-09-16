@@ -32,7 +32,7 @@ class Music(commands.Cog):
     @staticmethod
     async def compute(url: str) -> Optional[Tuple[str, FFmpegPCMAudio]]:
         executable = "ffmpeg" if "win" not in sys.platform else "avconv"
-        arg = url if url.endswith("https://") else f"ytsearch1:{url}"
+        arg = url if url.startswith("https://") and len(url.split() == 1) else f"ytsearch1:{url}"
         proc = await asyncio.create_subprocess_shell(
             f"youtube-dl \"{arg}\" --skip-download --get-title",
             stderr = asyncio.subprocess.PIPE
@@ -42,7 +42,7 @@ class Music(commands.Cog):
             return
         title = title.decode().split("\n")[0]
         proc = await asyncio.create_subprocess_shell(
-            f"youtube-dl \"{url}\" -f 251 -o -",
+            f"youtube-dl \"{arg}\" -f 251 -o -",
             stdin = asyncio.subprocess.PIPE,
             stdout = asyncio.subprocess.PIPE
         )
