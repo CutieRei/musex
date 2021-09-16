@@ -93,6 +93,14 @@ class Music(commands.Cog):
     async def play(self, ctx: commands.Context, *, url: str):
         voice_client: Optional[discord.VoiceClient] = ctx.voice_client
 
+        def after(err: Optional[Exception]) -> None:
+            if err:
+                return print(repr(err))
+            queue = self.bot.queue
+            if len(queue):
+                _, next_music = queue.popleft()
+                voice_client.play(next_music, after=after)
+
         if voice_client.is_playing():
             if len(self.bot.queue) >= 20:
                 return await ctx.send("Queue is full!")
@@ -104,15 +112,9 @@ class Music(commands.Cog):
                 return await ctx.send("Not found")
             title, src = ret
             await ctx.send(f"Added **{title}** to queue")
-            return self.bot.queue.append((title, src))
-
-        def after(err: Optional[Exception]) -> None:
-            if err:
-                return print(repr(err))
-            queue = self.bot.queue
-            if len(queue):
-                _, next_music = queue.popleft()
-                voice_client.play(next_music, after=after)
+            if len(self.bot.queue):
+                return self.bot.queue.append((title, src))
+            return voice_client.play(src, after=after)
         
         await ctx.reply("Fetching video data....")
         await ctx.trigger_typing()
