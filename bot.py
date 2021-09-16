@@ -1,12 +1,13 @@
 import asyncio
 import aiohttp
 from discord.ext import commands
+from obj import Musex
 import os
 
 extensions = [
     "music"
 ]
-bot = commands.Bot(command_prefix="mx.")
+bot = Musex(command_prefix="mx.")
 bot.load_extension("jishaku")
 
 for ext in extensions:
