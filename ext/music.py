@@ -123,31 +123,17 @@ class Music(commands.Cog):
         await ctx.send(f"Added **{title}** to queue")
         voice_client.play(src, after=after)
     
-    # @commands.command()
-    # @commands.guild_only()
-    # async def skip(self, ctx: commands.Context):
-    #     voice_client: Optional[discord.VoiceClient] = ctx.voice_client
-    #     if not voice_client:
-    #         return await ctx.send("Not in any voice channel")
+    @commands.command()
+    @commands.guild_only()
+    async def skip(self, ctx: commands.Context):
+        voice_client: Optional[discord.VoiceClient] = ctx.voice_client
+        if not voice_client:
+            return await ctx.send("Not in any voice channel")
         
-    #     elif not voice_client.is_playing():
-    #         return await ctx.send("Not playing anything")
-        
-    #     channel: discord.VoiceChannel = voice_client.channel
-    #     members = channel.members
-    #     members.remove(ctx.me)
-    #     count = len(members)-1
-    #     n = 0
-    #     if not n < count:
-    #         fmt = "Skip? ({}/{})"
-    #         msg = await ctx.send(fmt.format(n, count))
-    #         while count > 0:
-    #             event = await self.bot.wait_for("reaction_add", lambda r, u: hasattr(u, "guild") and r.message == msg and str(r.emoji) == emoji)
-    #             reaction: discord.Reaction = event[0]
-    #             member: discord.Member = event[1]
-    #             await msg.edit(fmt.format(n, count))
-    #     await ctx.send("Skipping")
-
+        elif not voice_client.is_playing():
+            return await ctx.send("Not playing anything")
+        voice_client.stop()
+        await ctx.send("Skipped")
 
 def setup(bot):
     bot.add_cog(Music(bot))
