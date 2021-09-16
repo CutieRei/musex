@@ -82,7 +82,7 @@ class Music(commands.Cog):
         embed = discord.Embed(
             color = ctx.author.color,
             title = "Music Queue",
-            description = desc
+            description = desc or "\*cricket noise\*"
         )
         await ctx.send(embed=embed)
 
