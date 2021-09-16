@@ -1,5 +1,5 @@
 import io
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 import discord
 from discord.ext import commands
 import asyncio
@@ -57,26 +57,52 @@ class Music(commands.Cog):
         source = FFmpegPCMAudio(io.BytesIO(stdout), executable=executable, pipe=True)
         return title, source
 
+    @commands.command(aliases=["dc", "leave"])
+    @commands.guild_only()
+    async def disconnect(self, ctx: commands.Context):
+        voice_client: Optional[discord.VoiceClient] = ctx.voice_client
+        if not voice_client:
+            return await ctx.send("Not in a voice channel")
+        author_vc = ctx.author.voice
+        if author_vc.channel is not None and author_vc.channel == voice_client.channel:
+            return await voice_client.disconnect()
+        await ctx.send("You're not connected to a voice channel")
+    
+    @commands.command(aliases=["q"])
+    @commands.guild_only()
+    async def queue(self, ctx: commands.Context):
+        queue: List[Tuple[str, FFmpegPCMAudio]] = list(self.bot.queue)
+        desc = "\n".join(f"**{c}.** {t[0]}" for c,t in enumerate(queue))
+        embed = discord.Embed(
+            color = ctx.me.color,
+            title = "Music Queue",
+            description = desc
+        )
+        await ctx.send(embed=embed)
+
+
     @commands.command()
     @commands.guild_only()
     @commands.check(in_vc)
     async def play(self, ctx: commands.Context, *, url: str):
-        voice_client: discord.VoiceClient = ctx.voice_client
+        voice_client: Optional[discord.VoiceClient] = ctx.voice_client
 
         if voice_client.is_playing():
+            if len(self.bot.queue) >= 20:
+                return await ctx.send("Queue is full!")
             ret = await self.compute(url)
             if not ret:
                 return await ctx.send("Not found")
             title, src = ret
             await ctx.send(f"Added **{title}** to queue")
-            return self.bot.queue.append(src)
+            return self.bot.queue.append((title, src))
 
         def after(err: Optional[Exception]) -> None:
             if err:
                 return print(repr(err))
             queue = self.bot.queue
             if len(queue):
-                next_music = queue.popleft()
+                _, next_music = queue.popleft()
                 voice_client.play(next_music, after=after)
         
         ret = await self.compute(url)
