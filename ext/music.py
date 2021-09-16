@@ -39,7 +39,7 @@ class Music(commands.Cog):
             stderr = asyncio.subprocess.PIPE
         )
         _, title = await proc.communicate()
-        print(title)
+        print(title, _)
         if not title:
             return
         title = title.decode().split("\n")[0]
