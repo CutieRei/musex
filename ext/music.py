@@ -28,6 +28,12 @@ class Music(commands.Cog):
 
     def __init__(self, bot: Musex):
         self.bot = bot
+    
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member: Member, before: discord.VoiceState, after: discord.VoiceState):
+        if member == self.bot.user:
+            if after.channel == None:
+                self.bot.queue.clear()
 
     @staticmethod
     async def compute(url: str) -> Optional[Tuple[str, FFmpegPCMAudio]]:
