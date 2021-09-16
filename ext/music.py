@@ -72,9 +72,9 @@ class Music(commands.Cog):
     @commands.guild_only()
     async def queue(self, ctx: commands.Context):
         queue: List[Tuple[str, FFmpegPCMAudio]] = list(self.bot.queue)
-        desc = "\n".join(f"**{c}.** {t[0]}" for c,t in enumerate(queue))
+        desc = "\n".join(f"**{c+1}.** {t[0]}" for c,t in enumerate(queue))
         embed = discord.Embed(
-            color = ctx.me.color,
+            color = ctx.author.color,
             title = "Music Queue",
             description = desc
         )
