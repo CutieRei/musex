@@ -36,16 +36,15 @@ class Music(commands.Cog):
         print(arg)
         proc = await asyncio.create_subprocess_shell(
             f"youtube-dl \"{arg}\" --skip-download --get-title",
-            stderr = asyncio.subprocess.PIPE
+            stdout = asyncio.subprocess.PIPE
         )
-        _, title = await proc.communicate()
-        print(title, _)
+        title, _ = await proc.communicate()
+        print(title)
         if not title:
             return
         title = title.decode().split("\n")[0]
         proc = await asyncio.create_subprocess_shell(
             f"youtube-dl \"{arg}\" -f 251 -o -",
-            stdin = asyncio.subprocess.PIPE,
             stdout = asyncio.subprocess.PIPE
         )
         stdout, _ = await proc.communicate()
