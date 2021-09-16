@@ -90,6 +90,9 @@ class Music(commands.Cog):
         if voice_client.is_playing():
             if len(self.bot.queue) >= 20:
                 return await ctx.send("Queue is full!")
+            
+            await ctx.reply("Fething video data....")
+            await ctx.trigger_typing()
             ret = await self.compute(url)
             if not ret:
                 return await ctx.send("Not found")
@@ -105,6 +108,8 @@ class Music(commands.Cog):
                 _, next_music = queue.popleft()
                 voice_client.play(next_music, after=after)
         
+        await ctx.reply("Fething video data....")
+        await ctx.trigger_typing()
         ret = await self.compute(url)
         if not ret:
             return await ctx.send("Not found")
