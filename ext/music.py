@@ -33,11 +33,13 @@ class Music(commands.Cog):
     async def compute(url: str) -> Optional[Tuple[str, FFmpegPCMAudio]]:
         executable = "ffmpeg" if "win" not in sys.platform else "avconv"
         arg = url if url.startswith("https://") and len(url.split() == 1) else f"ytsearch1:{url}"
+        print(arg)
         proc = await asyncio.create_subprocess_shell(
             f"youtube-dl \"{arg}\" --skip-download --get-title",
             stderr = asyncio.subprocess.PIPE
         )
         _, title = await proc.communicate()
+        print(title)
         if not title:
             return
         title = title.decode().split("\n")[0]
