@@ -112,7 +112,7 @@ class Music(commands.Cog):
                 return await ctx.send("Not found")
             title, src = ret
             await ctx.send(f"Added **{title}** to queue")
-            if len(self.bot.queue):
+            if len(self.bot.queue) or voice_client.is_playing():
                 return self.bot.queue.append((title, src, ctx.author))
             return voice_client.play(src, after=after)
         
