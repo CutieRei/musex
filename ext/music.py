@@ -18,10 +18,10 @@ async def in_vc(ctx: commands.Context):
             if isinstance(author_vc.channel, discord.VoiceChannel):
                 await author_vc.channel.connect()
                 return True
-        asyncio.create_task(ctx.send("Not in a voice channel"))
+        # asyncio.create_task(ctx.send("Not in a voice channel"))
         return False
     elif ctx.author.voice and ctx.author.voice.channel != vc.channel:
-        asyncio.create_task(ctx.send("You're not in the same voice channel"))
+        # asyncio.create_task(ctx.send("You're not in the same voice channel"))
         return False
     return True
 
