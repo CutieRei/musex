@@ -86,6 +86,24 @@ class Music(commands.Cog):
         )
         await ctx.send(embed=embed)
 
+    @commands.command()
+    @commands.guild_only()
+    async def np(self, ctx: commands.Context):
+
+        if not ctx.voice_client:
+            return await ctx.send("Not connected to a voice channel")
+        
+        embed = discord.Embed(
+            color = ctx.author.color
+        )
+
+        if not self.bot.now_playing:
+            embed.description = "Not playing anything..."
+            return await ctx.send(embed=embed)
+        title, user = self.bot.now_playing
+        embed.description = f"Now playing **{title}**"
+        embed.set_footer(text=f"Requested by **{user}**")
+        await ctx.send(embed=embed)
 
     @commands.command()
     @commands.guild_only()
@@ -98,8 +116,12 @@ class Music(commands.Cog):
                 return print(repr(err))
             queue = self.bot.queue
             if len(queue):
-                _, next_music, _ = queue.popleft()
+                title, next_music, user = queue.popleft()
                 voice_client.play(next_music, after=after)
+                self.bot.now_playing = (title, user)
+                return
+            self.bot.now_playing = None
+
 
         if voice_client.is_playing():
             if len(self.bot.queue) >= 20:
@@ -114,7 +136,9 @@ class Music(commands.Cog):
             await ctx.send(f"Added **{title}** to queue")
             if len(self.bot.queue) or voice_client.is_playing():
                 return self.bot.queue.append((title, src, ctx.author))
-            return voice_client.play(src, after=after)
+            voice_client.play(src, after=after)
+            self.bot.now_playing = (title, ctx.author)
+            return
         
         await ctx.reply("Fetching video data....")
         await ctx.trigger_typing()
@@ -124,6 +148,7 @@ class Music(commands.Cog):
         title, src = ret
         await ctx.send(f"Added **{title}** to queue")
         voice_client.play(src, after=after)
+        self.bot.now_playing = (title, ctx.author)
     
     @commands.command()
     @commands.guild_only()
