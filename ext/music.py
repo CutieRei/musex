@@ -102,7 +102,7 @@ class Music(commands.Cog):
             return await ctx.send(embed=embed)
         title, user = self.bot.now_playing
         embed.description = f"Now playing **{title}**"
-        embed.set_footer(text=f"Requested by **{user}**")
+        embed.set_footer(text=f"Requested by {user}")
         await ctx.send(embed=embed)
 
     @commands.command()
