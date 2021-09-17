@@ -56,7 +56,7 @@ class Help(commands.HelpCommand):
             timestamp = datetime.datetime.utcnow()
         )
 
-        embed.add_field(name="commands", value="\n".join((i.qualified_name for i in valid_commands)))
+        embed.add_field(name="commands", value=", ".join((i.qualified_name for i in valid_commands)))
 
         await self.get_destination().send(embed=embed)
 
