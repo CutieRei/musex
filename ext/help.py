@@ -49,6 +49,17 @@ class Help(commands.HelpCommand):
         if not valid_commands:
             return await self.command_not_found(self.command)
 
+        embed = discord.Embed(
+            title = f"Help for {cog.qualified_name}",
+            description = cog.description or "No descrition",
+            color = self.embed_color,
+            timestamp = datetime.datetime.utcnow()
+        )
+
+        embed.add_field(name="commands", value="\n".join((i.qualified_name for i in valid_commands)))
+
+        await self.get_destination().send(embed=embed)
+
     async def send_command_help(self, command: commands.Command):
         if not await self._can_run(self.context, command):
             return await self.command_not_found(self.command)
