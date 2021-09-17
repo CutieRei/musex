@@ -35,8 +35,7 @@ class Music(commands.Cog):
             if after.channel == None:
                 self.bot.queue.clear()
 
-    @staticmethod
-    async def compute(url: str) -> Optional[Tuple[str, FFmpegPCMAudio]]:
+    async def compute(self, url: str) -> Optional[Tuple[str, FFmpegPCMAudio]]:
         executable = "ffmpeg" if "win" not in sys.platform else "avconv"
         arg = url if url.startswith("https://") and len(url.split()) == 1 else f"ytsearch1:{url}"
         print(arg)
@@ -45,15 +44,17 @@ class Music(commands.Cog):
             stdout = asyncio.subprocess.PIPE
         )
         title, _ = await proc.communicate()
-        print(title)
         if not title:
             return
         title = title.decode().split("\n")[0]
-        proc = await asyncio.create_subprocess_shell(
-            f"youtube-dl \"{arg}\" -f 251 -o -",
-            stdout = asyncio.subprocess.PIPE
-        )
-        stdout, _ = await proc.communicate()
+        stdout = self.bot.cache.get(title)
+        if stdout is None:
+            proc = await asyncio.create_subprocess_shell(
+                f"youtube-dl \"{arg}\" -f 251 -o -",
+                stdout = asyncio.subprocess.PIPE
+            )
+            stdout, _ = await proc.communicate()
+            self.bot.cache[title] = stdout
         # proc = await asyncio.create_subprocess_shell(
         #     f"{executable} -f webm -i pipe:0 -f mp3 pipe:1",
         #     stdin=asyncio.subprocess.PIPE,
