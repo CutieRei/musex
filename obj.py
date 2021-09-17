@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, MutableMapping, Optional, Tuple, Union
 from discord import User, Member
 from discord.ext import commands
 from collections import deque
@@ -11,9 +11,10 @@ class Musex(commands.Bot):
     queue: Deque[Tuple[str, FFmpegPCMAudio, Union[User, Member]]]
     config: Dict[str, Any]
     now_playing: Optional[Tuple[str, Union[User, Member]]]
-    cache: cachetools.LFUCache[str, bytes]
+    cache: MutableMapping[str, bytes]
 
     def __init__(self, command_prefix, **options):
         super().__init__(command_prefix, **options)
         self.queue = deque()
         self.now_playing = None
+        self.cache = cachetools.LFUCache()
