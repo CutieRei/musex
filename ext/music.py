@@ -81,7 +81,7 @@ class Music(commands.Cog):
         if not voice_client:
             return await ctx.send("Not in a voice channel")
         author_vc = ctx.author.voice
-        if author_vc.channel is not None and author_vc.channel == voice_client.channel:
+        if author_vc and author_vc.channel is not None and author_vc.channel == voice_client.channel:
             return await voice_client.disconnect()
         await ctx.send("You're not connected to a voice channel")
     
