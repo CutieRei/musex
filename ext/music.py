@@ -1,5 +1,5 @@
 import io
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 import discord
 from discord.ext import commands
 import asyncio
@@ -77,8 +77,8 @@ class Music(commands.Cog):
     @commands.command(aliases=["q"])
     @commands.guild_only()
     async def queue(self, ctx: commands.Context):
-        queue: List[Tuple[str, FFmpegPCMAudio]] = list(self.bot.queue)
-        desc = "\n".join(f"**{c+1}.** {t[0]}" for c,t in enumerate(queue))
+        queue: List[Tuple[str, FFmpegPCMAudio, Union[discord.User, discord.Member]]] = list(self.bot.queue)
+        desc = "\n".join(f"{c+1}. **{t[0]}** requested by **{t[2].mention}({t[2]})**" for c,t in enumerate(queue))
         embed = discord.Embed(
             color = ctx.author.color,
             title = "Music Queue",
@@ -98,7 +98,7 @@ class Music(commands.Cog):
                 return print(repr(err))
             queue = self.bot.queue
             if len(queue):
-                _, next_music = queue.popleft()
+                _, next_music, _ = queue.popleft()
                 voice_client.play(next_music, after=after)
 
         if voice_client.is_playing():
@@ -113,7 +113,7 @@ class Music(commands.Cog):
             title, src = ret
             await ctx.send(f"Added **{title}** to queue")
             if len(self.bot.queue):
-                return self.bot.queue.append((title, src))
+                return self.bot.queue.append((title, src, ctx.author))
             return voice_client.play(src, after=after)
         
         await ctx.reply("Fetching video data....")
