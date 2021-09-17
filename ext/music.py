@@ -18,6 +18,7 @@ async def in_vc(ctx: commands.Context):
             if isinstance(author_vc.channel, discord.VoiceChannel):
                 await author_vc.channel.connect()
                 return True
+        return False
     elif ctx.author.voice and ctx.author.voice.channel != vc.channel:
         return False
     return True
