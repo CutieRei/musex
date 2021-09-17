@@ -17,4 +17,4 @@ class Musex(commands.Bot):
         super().__init__(command_prefix, **options)
         self.queue = deque()
         self.now_playing = None
-        self.cache = cachetools.LFUCache()
+        self.cache = cachetools.LFUCache(20)
