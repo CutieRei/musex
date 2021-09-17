@@ -8,7 +8,8 @@ extensions = [
     "music",
     "help"
 ]
-bot = Musex(command_prefix="mx.")
+    
+bot = Musex(command_prefix=["mx.", "Mx.", "mX.", "MX."])
 bot.load_extension("jishaku")
 
 for ext in extensions:
