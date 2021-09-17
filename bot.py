@@ -5,7 +5,8 @@ from obj import Musex
 import os
 
 extensions = [
-    "music"
+    "music",
+    "help"
 ]
 bot = Musex(command_prefix="mx.")
 bot.load_extension("jishaku")
