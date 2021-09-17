@@ -24,6 +24,10 @@ async def in_vc(ctx: commands.Context):
 
 class Music(commands.Cog):
 
+    """
+    Category which includes all commands to play a song
+    """
+
     bot: Musex
 
     def __init__(self, bot: Musex):
@@ -67,6 +71,9 @@ class Music(commands.Cog):
     @commands.command(aliases=["dc", "leave"])
     @commands.guild_only()
     async def disconnect(self, ctx: commands.Context):
+        """
+        Leave vc explicitly
+        """
         voice_client: Optional[discord.VoiceClient] = ctx.voice_client
         if not voice_client:
             return await ctx.send("Not in a voice channel")
@@ -78,6 +85,9 @@ class Music(commands.Cog):
     @commands.command(aliases=["q"])
     @commands.guild_only()
     async def queue(self, ctx: commands.Context):
+        """
+        Displays the queue of the current music session
+        """
         queue: List[Tuple[str, FFmpegPCMAudio, Union[discord.User, discord.Member]]] = list(self.bot.queue)
         desc = "\n".join(f"{c+1}. **{t[0]}** requested by **{t[2].mention}({t[2]})**" for c,t in enumerate(queue))
         embed = discord.Embed(
@@ -90,7 +100,9 @@ class Music(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def np(self, ctx: commands.Context):
-
+        """
+        Displays currently playing music
+        """
         if not ctx.voice_client:
             return await ctx.send("Not connected to a voice channel")
         
@@ -106,10 +118,16 @@ class Music(commands.Cog):
         embed.set_footer(text=f"Requested by {user}")
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(usage="<url|video title>")
     @commands.guild_only()
     @commands.check(in_vc)
     async def play(self, ctx: commands.Context, *, url: str):
+        """
+        Plays a song, if not in vc it will join by itself.
+
+        if a song is currently playing it will be queued,
+        if the bot disconnect from vc the queue is also cleared.
+        """
         voice_client: Optional[discord.VoiceClient] = ctx.voice_client
 
         def after(err: Optional[Exception]) -> None:
@@ -154,6 +172,9 @@ class Music(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def skip(self, ctx: commands.Context):
+        """
+        Skips a song, if playing any
+        """
         voice_client: Optional[discord.VoiceClient] = ctx.voice_client
         if not voice_client:
             return await ctx.send("Not in any voice channel")
